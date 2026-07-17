@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechnicChecker — Security Panel</title>
+  <meta name="api-url" content="http://localhost:3001">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="bgCanvas"></canvas>
+
+  <div id="loginPage">
+    <div class="login-card">
+      <div class="logo-section">
+        <div class="logo-row">
+          <img src="logo.jpg" class="logo-img" alt="logo">
+          <h1>Technic<span>Checker</span></h1>
+          <img src="logo.jpg" class="logo-img" alt="logo">
+        </div>
+        <p class="tagline">Security Monitoring Panel</p>
+      </div>
+      <div class="login-form">
+        <div class="input-group">
+          <label>Access Key</label>
+          <input type="text" id="keyInput" placeholder="TECH-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false" maxlength="45">
+          <div class="input-line"></div>
+        </div>
+        <button id="loginBtn" type="submit">Authenticate</button>
+        <div id="errorMessage" class="error-msg hidden"></div>
+        <p class="hint">No key? Run <span>/getkey</span> in <a href="https://t.me/technicchecker_bot" target="_blank">@technicchecker_bot</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="dashboardPage" class="hidden">
+    <div class="dash-header">
+      <div class="dash-logo">
+        <img src="logo.jpg" class="logo-img small" alt="logo">
+        <span>Technic<span>Checker</span></span>
+        <img src="logo.jpg" class="logo-img small" alt="logo">
+      </div>
+      <button id="logoutBtn" class="btn-ghost">Disconnect</button>
+    </div>
+
+    <div class="dash-grid">
+      <div class="stat-card" id="statUser">
+        <div class="stat-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">User ID</div>
+          <div class="stat-value" id="statUserId">—</div>
+        </div>
+      </div>
+      <div class="stat-card" id="statReg">
+        <div class="stat-icon purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Registration #</div>
+          <div class="stat-value" id="statRegNum">—</div>
+        </div>
+      </div>
+      <div class="stat-card" id="statTotal">
+        <div class="stat-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Checks</div>
+          <div class="stat-value" id="statTotalChecks">—</div>
+        </div>
+      </div>
+      <div class="stat-card" id="statDaily">
+        <div class="stat-icon orange">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Daily Usage</div>
+          <div class="stat-value" id="statDailyChecks">—</div>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="checker">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        DB Checker
+      </button>
+      <button class="mode-tab" data-mode="valid">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Valid Check
+      </button>
+    </div>
+
+    <!-- DB Checker Panel -->
+    <div class="dash-panel" id="panelChecker">
+      <div class="panel-header">
+        <h2><span class="accent">//</span> DB CHECKER</h2>
+      </div>
+      <div class="checker-controls">
+        <input type="text" id="nickInput" placeholder="Enter nickname..." spellcheck="false">
+        <button id="checkBtn"><img src="pashok.jpg" class="btn-photo" alt="go"></button>
+      </div>
+      <div id="checkResults" class="results-container hidden">
+        <div class="results-header">
+          <span>Results</span>
+          <span id="resultCount"></span>
+        </div>
+        <div id="resultsList"></div>
+      </div>
+      <div id="emptyState" class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#1f2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <p>Enter a nickname to search across databases</p>
+      </div>
+    </div>
+
+    <!-- Valid Check Panel -->
+    <div class="dash-panel hidden" id="panelValid">
+      <div class="panel-header">
+        <h2><span class="accent">//</span> VALID CHECK</h2>
+      </div>
+      <div class="checker-controls">
+        <input type="text" id="validUserInput" placeholder="Username" spellcheck="false">
+        <input type="text" id="validPassInput" placeholder="Password" spellcheck="false">
+        <button id="validBtn"><img src="pashok.jpg" class="btn-photo" alt="go"></button>
+      </div>
+      <div id="validResults" class="results-container hidden">
+        <div class="results-header">
+          <span>Result</span>
+        </div>
+        <div id="validResultList"></div>
+      </div>
+      <div id="validEmptyState" class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#1f2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
+        <p>Enter username and password to validate</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
