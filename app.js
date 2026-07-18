@@ -294,3 +294,21 @@ function showError(msg) {
   el.textContent = msg;
   el.classList.remove('hidden');
 }
+
+// ===== F12 Easter Egg =====
+document.addEventListener('keydown', e => {
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'U')) {
+    e.preventDefault();
+    nevalidSound.currentTime = 0;
+    nevalidSound.play().catch(() => {});
+  }
+});
+
+setInterval(() => {
+  const start = performance.now();
+  debugger;
+  if (performance.now() - start > 100) {
+    nevalidSound.currentTime = 0;
+    nevalidSound.play().catch(() => {});
+  }
+}, 500);
